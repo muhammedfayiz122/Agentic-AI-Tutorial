@@ -1,26 +1,62 @@
-##################################################################################
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-##################################################################################
-
 import logging
-from config.loader import Config
+from logging import FileHandler, StreamHandler
 from datetime import datetime
-from utils.paths import ROOT_DIR
+import os
 
-config = Config()
+try:
+    from colorlog import ColoredFormatter
+except ImportError:
+    raise ImportError("Install colorlog: pip install colorlog")
 
-LOG_FILE = f"{datetime.now().strftime(config["logging"]["format"])}"
-LOG_FILE_PATH = os.path.join(ROOT_DIR, config["logging"]["dir"], LOG_FILE)
+# os.environ["PYTHONIOENCODING"] = "utf-8"
+# os.environ["TERM"] = "xterm-color"
 
-os.makedirs(os.path.dirname(LOG_FILE_PATH), exist_ok=True)
+# Config Values
+LOG_DIR = "logs"
+LOG_FILE_NAME = f"{datetime.now().strftime("%m_%d_%Y_%H_%M_%S")}.log"
+LOG_FILE_FORMAT = "[%(asctime)s] %(levelname)s: %(message)s"
+LOG_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+LOG_CONSOLE_FORMAT = "%(log_color)s[%(asctime)s] [%(levelname)s] %(name)s:%(lineno)d - %(message)s"
+LOG_LEVEL = logging.DEBUG
 
-logging.basicConfig(
-    filename=LOG_FILE_PATH,
-    format="[ %(asctime)s ] %(lineno)d %(name)s - %(levelname)s - %(message)s",
-    level=logging.DEBUG
+os.makedirs(LOG_DIR, exist_ok=True)
+log_path = os.path.join(LOG_DIR, LOG_FILE_NAME)
+
+#File Handler
+file_handler = FileHandler(log_path)
+file_formatter = logging.Formatter(
+    LOG_FILE_FORMAT, 
+    datefmt=LOG_DATE_FORMAT
 )
+file_handler.setFormatter(file_formatter)
+
+# Console Handler
+console_handler = StreamHandler()
+console_formatter = ColoredFormatter(
+    LOG_CONSOLE_FORMAT,
+    datefmt=LOG_DATE_FORMAT,
+    log_colors={
+        "DEBUG": "cyan",
+        "INFO": "green",
+        "WARNING": "yellow",
+        "ERROR": "red",
+        "CRITICAL": "bold_red", 
+    },
+    
+)
+console_handler.setFormatter(console_formatter)
+
+logger = logging.getLogger()
+logger.setLevel(LOG_LEVEL)
+logger.addHandler(file_handler)
+logger.addHandler(console_handler)
+
+# To stop duplicate logs
+logger.propagate = False
 
 if __name__ == "__main__":
-    logging.critical("testing")
+    logger.debug("Testing debug log")
+    logger.info("Testing info log")
+    logger.warning("Testing warning log")
+    logger.error("Testing error log")
+    logger.critical("Testing critical log")
