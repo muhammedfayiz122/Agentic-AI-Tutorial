@@ -20,9 +20,9 @@ def error_message_details(error, error_details):
     file_name = exc_tb.tb_frame.f_code.co_filename
     
     error_message = (
-        f"\n[ERROR]",
+        f"\n[ERROR]"
         f"\nFile    : {file_name}"
-        f"\nLine    : {exc_tb.tb_lineno}",
+        f"\nLine    : {exc_tb.tb_lineno}"
         f"\nMessage : {str(error)}\n"
     )
     return error_message
