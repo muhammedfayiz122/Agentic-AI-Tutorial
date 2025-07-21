@@ -1,5 +1,6 @@
 import logging
-from logging import FileHandler, StreamHandler
+from logging import StreamHandler
+from logging.handlers import RotatingFileHandler
 from datetime import datetime
 import os
 
@@ -18,12 +19,16 @@ LOG_FILE_FORMAT = "[%(asctime)s] %(levelname)s: %(message)s"
 LOG_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 LOG_CONSOLE_FORMAT = "%(log_color)s[%(asctime)s] [%(levelname)s] %(name)s:%(lineno)d - %(message)s"
 LOG_LEVEL = logging.DEBUG
+LOG_MAX_BYTES = 5 * 1024 * 1024
+LOG_BACKUP_COUNT = 50
 
 os.makedirs(LOG_DIR, exist_ok=True)
 log_path = os.path.join(LOG_DIR, LOG_FILE_NAME)
 
 #File Handler
-file_handler = FileHandler(log_path)
+file_handler = RotatingFileHandler(
+    log_path, maxBytes=LOG_MAX_BYTES, backupCount=LOG_BACKUP_COUNT 
+)
 file_formatter = logging.Formatter(
     LOG_FILE_FORMAT, 
     datefmt=LOG_DATE_FORMAT
@@ -46,7 +51,7 @@ console_formatter = ColoredFormatter(
 )
 console_handler.setFormatter(console_formatter)
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 logger.setLevel(LOG_LEVEL)
 logger.addHandler(file_handler)
 logger.addHandler(console_handler)
