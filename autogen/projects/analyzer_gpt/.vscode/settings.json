@@ -1,0 +1,9 @@
+{
+    "cSpell.words": [
+        "agentchat",
+        "autogen"
+    ],
+    "yaml.schemas": {
+        "https://www.schemastore.org/yamllint.json": "file:///c%3A/Users/muham/Desktop/Agentic_ai_class/autogen/projects/analyzer_gpt/config/config.yaml"
+    }
+}

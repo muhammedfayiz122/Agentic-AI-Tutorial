@@ -4,6 +4,8 @@ from autogen_ext.code_executors.docker import DockerCommandLineCodeExecutor
 from autogen_agentchat.messages import TextMessage
 
 async def main():
+    """
+    """    
     docker = DockerCommandLineCodeExecutor(
         image="python:3-slim",
         container_name="CodeExecuterContainer",
